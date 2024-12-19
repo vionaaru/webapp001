@@ -3,96 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Telegram WebApp</title>
+    <title>WebApp Test</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
+            text-align: center;
             font-family: Arial, sans-serif;
             color: var(--tg-theme-text-color);
             background-color: var(--tg-theme-bg-color);
+            margin: 0;
+            padding: 20px;
         }
 
-        .button {
-            margin: 10px;
+        button {
+            margin-top: 20px;
             padding: 10px 20px;
+            font-size: 16px;
             background-color: var(--tg-theme-button-color);
             color: var(--tg-theme-button-text-color);
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
         }
 
-        .button:hover {
+        button:hover {
             opacity: 0.9;
-        }
-
-        #user-info {
-            margin-bottom: 20px;
-            text-align: center;
         }
 
         #status {
             margin-top: 20px;
             font-size: 14px;
-            color: var(--tg-theme-hint-color);
         }
     </style>
 </head>
 <body>
-
-    <div id="user-info"></div>
-    <button id="send-data-btn" class="button">Отправить данные</button>
-    <button id="close-btn" class="button">Закрыть WebApp</button>
-    <div id="status"></div>
+    <h1>Пример Telegram WebApp</h1>
+    <button id="send-data-btn">Отправить данные</button>
+    <button id="close-btn">Закрыть WebApp</button>
+    <p id="status"></p>
 
     <script>
         const tg = window.Telegram.WebApp;
 
-        // Расширяем WebApp на весь экран
-        tg.expand();
+        tg.expand(); // Расширяем WebApp
 
-        // Инициализация Main Button
-        tg.MainButton.setText("Отправить в бота");
-        tg.MainButton.show();
-        tg.MainButton.enable();
+        const status = document.getElementById("status");
 
-        // Отображение данных пользователя
-        const userInfoDiv = document.getElementById("user-info");
-        const statusDiv = document.getElementById("status");
-
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const user = tg.initDataUnsafe.user;
-            userInfoDiv.innerHTML = `
-                <p>Привет, ${user.first_name} ${user.last_name || ""}!</p>
-                <p>Ваш ID: ${user.id}</p>
-                <p>Ваш username: @${user.username || "не указан"}</p>
-            `;
-        } else {
-            userInfoDiv.innerHTML = "<p>Данные пользователя недоступны.</p>";
-        }
-
-        // Обработка Main Button
-        tg.onEvent("mainButtonClicked", function () {
-            tg.sendData("Данные от WebApp");
-            statusDiv.innerText = "Данные отправлены в бота.";
-        });
-
-        // Кнопка "Отправить данные"
+        // Отправка данных через кнопку
         document.getElementById("send-data-btn").addEventListener("click", () => {
-            tg.sendData("Кнопка отправки нажата");
-            statusDiv.innerText = "Данные отправлены через кнопку.";
+            tg.sendData("Test data without closing WebApp"); // Отправляем данные
+            status.textContent = "Данные отправлены боту!";
         });
 
-        // Кнопка "Закрыть WebApp"
+        // Закрытие WebApp (по желанию)
         document.getElementById("close-btn").addEventListener("click", () => {
-            tg.close();
+            tg.close(); // Закрыть WebApp
         });
     </script>
 </body>
