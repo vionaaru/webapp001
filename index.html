@@ -5,110 +5,111 @@
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Test Telegram WebApps API</title>
-   <script src="https://telegram.org/js/telegram-web-app.js"></script> <!--Подключаем скрипт от телеграм-->
+   <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- Подключаем скрипт Telegram WebApp -->
 
    <style>
-      body{
+      body {
          color: var(--tg-theme-text-color);
          background: var(--tg-theme-bg-color);
          display: flex;
          flex-direction: column;
          align-items: center;
          font-size: 18px;
+         padding: 20px;
       }
 
-      .hint{
+      .hint {
          color: var(--tg-theme-hint-color);
       }
 
-      .link{
+      .link {
          color: var(--tg-theme-link-color);
       }
 
-      .button{
+      .button {
          background: var(--tg-theme-button-color);
          color: var(--tg-theme-button-text-color);
          border: none;
          font-size: 18px;
+         padding: 10px 20px;
+         cursor: pointer;
       }
 
-      .button:not(:last-child){
-         margin-bottom: 20px
+      .button:not(:last-child) {
+         margin-bottom: 20px;
       }
 
-      #usercard{
+      #usercard {
          text-align: center;
+         margin-bottom: 20px;
       }
    </style>
 </head>
 
 <body>
-   <div id="usercard"> <!--Карта профиля, человека, который к нам обратился-->
+   <div id="usercard"> <!-- Карточка профиля пользователя -->
    </div>
-   <p>Просто текст для проверки</p> <!--Просто текст для проверки-->
-   <a class="link" href="https://weather.nsu.ru">Link</a> <!--Просто ссылка для проверки-->
-   <p class="hint">Просто текст-подсказка для проверки</p> <!--Просто текст-подсказка для проверки-->
-   <button id="btn" class="button">Show/Hide Main Button</button> <!--Кнопка, чтобы скрыть / показать основную кнопку-->
-   <button id="btnED" class="button">Enable/Disable Main Button</button> <!--Кнопка, чтобы сделать кнопку активной/неактивной-->
+   <p>Просто текст для проверки</p> <!-- Пример текста -->
+   <a class="link" href="https://weather.nsu.ru">Link</a> <!-- Пример ссылки -->
+   <p class="hint">Просто текст-подсказка для проверки</p> <!-- Пример подсказки -->
+   <button id="btn" class="button">Show/Hide Main Button</button> <!-- Кнопка для управления видимостью Main Button -->
+   <button id="btnED" class="button">Enable/Disable Main Button</button> <!-- Кнопка для управления активностью Main Button -->
 </body>
 
 <script>
-   let tg = window.Telegram.WebApp; //получаем объект webapp телеграма 
+   let tg = window.Telegram.WebApp; // Получаем объект WebApp Telegram
 
-   tg.expand(); //расширяем на все окно  
+   tg.expand(); // Расширяем WebApp на весь экран
 
-   tg.MainButton.text = "MainButton Text"; //изменяем текст кнопки
-   tg.MainButton.setText("MainButton Text2222"); //изменяем текст кнопки иначе
-   tg.MainButton.textColor = "#F55353"; //изменяем цвет текста кнопки
-   tg.MainButton.color = "#143F6B"; //изменяем цвет бэкграунда кнопки
-   tg.MainButton.setParams({"color": "#143F6B"}); //так изменяются все параметры
+   // Настраиваем Main Button
+   tg.MainButton.setText("Отправить данные"); // Задаём текст кнопки
+   tg.MainButton.textColor = "#FFFFFF"; // Белый цвет текста
+   tg.MainButton.color = "#143F6B"; // Тёмно-синий фон
+   tg.MainButton.show(); // Показываем Main Button
+   tg.MainButton.enable(); // Активируем Main Button
 
-   let btn = document.getElementById("btn"); //получаем кнопку скрыть/показать 
+   // Обработчик клика на Main Button
+   Telegram.WebApp.onEvent('mainButtonClicked', function() {
+      console.log("Main Button нажата!"); // Лог в консоль для отладки
+      tg.sendData("Данные от MainButton WebApp"); // Отправляем данные в Telegram
+   });
 
-   btn.addEventListener('click', function(){ //вешаем событие на нажатие html-кнопки
-      if (tg.MainButton.isVisible){ //если кнопка показана 
-         tg.MainButton.hide() //скрываем кнопку 
-      }
-      else{ //иначе
-         tg.MainButton.show() //показываем 
+   // Отображение данных пользователя
+   if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      let user = tg.initDataUnsafe.user;
+      let usercard = document.getElementById("usercard");
+
+      let profName = document.createElement('p');
+      profName.innerText = `${user.first_name} ${user.last_name || ""} (@${user.username || "не указан"})`;
+      usercard.appendChild(profName);
+
+      let userid = document.createElement('p');
+      userid.innerText = `ID пользователя: ${user.id}`;
+      usercard.appendChild(userid);
+   } else {
+      document.body.innerHTML += "<p>Данные пользователя недоступны.</p>";
+   }
+
+   // Управление видимостью Main Button
+   let btn = document.getElementById("btn");
+   btn.addEventListener('click', function() {
+      if (tg.MainButton.isVisible) {
+         tg.MainButton.hide(); // Скрываем кнопку
+      } else {
+         tg.MainButton.show(); // Показываем кнопку
       }
    });
 
-   let btnED = document.getElementById("btnED"); //получаем кнопку активировать/деактивировать
-   btnED.addEventListener('click', function(){ //вешаем событие на нажатие html-кнопки
-      if (tg.MainButton.isActive){ //если кнопка показана 
-         tg.MainButton.setParams({"color": "#E0FFFF"}); //меняем цвет
-         tg.MainButton.disable() //скрываем кнопку 
-      }
-      else{ //иначе
-         tg.MainButton.setParams({"color": "#143F6B"}); //меняем цвет
-         tg.MainButton.enable() //показываем 
+   // Управление активностью Main Button
+   let btnED = document.getElementById("btnED");
+   btnED.addEventListener('click', function() {
+      if (tg.MainButton.isActive) {
+         tg.MainButton.setParams({"color": "#E0FFFF"}); // Меняем цвет
+         tg.MainButton.disable(); // Деактивируем кнопку
+      } else {
+         tg.MainButton.setParams({"color": "#143F6B"}); // Меняем цвет
+         tg.MainButton.enable(); // Активируем кнопку
       }
    });
-
-   Telegram.WebApp.onEvent('mainButtonClicked', function(){
-      tg.sendData("Данные от MainButton WebApp");
-      //при клике на основную кнопку отправляем данные в строковом виде
-   });
-
-
-   let usercard = document.getElementById("usercard"); //получаем блок usercard 
-
-   let profName = document.createElement('p'); //создаем параграф
-   profName.innerText = `${tg.initDataUnsafe.user.first_name}
-   ${tg.initDataUnsafe.user.last_name}
-   ${tg.initDataUnsafe.user.username} (${tg.initDataUnsafe.user.language_code})`;
-   //выдем имя, "фамилию", через тире username и код языка
-   usercard.appendChild(profName); //добавляем 
-
-   let userid = document.createElement('p'); //создаем еще параграф 
-   userid.innerText = `${tg.initDataUnsafe.user.id}`; //показываем user_id
-   usercard.appendChild(userid); //добавляем
-
-
-   //работает только в attachment menu
-   // let pic = document.createElement('img'); //создаем img
-   // pic.src = tg.initDataUnsafe.user.photo_url; //задаём src 
-   // usercard.appendChild(pic); //добавляем элемент в карточку 
 </script>
 </html>
