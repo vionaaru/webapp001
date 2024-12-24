@@ -37,32 +37,29 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.enableClosingConfirmation();
 
         const status = document.getElementById("status");
 
-        // Отправка данных в Telegram
         document.getElementById("send-data-btn").addEventListener("click", () => {
             const data = JSON.stringify({
                 action: "button_click",
                 value: "Test data from WebApp"
             });
-            tg.sendData(data); // Отправляем данные в бот
+            tg.sendData(data);
             status.textContent = `Данные отправлены: ${data}`;
-            console.log("Данные отправлены:", data);
         });
 
-        // Обработка MainButton
-        tg.MainButton.text = "Отправить MainButton";
+        tg.MainButton.setText("Отправить MainButton");
         tg.MainButton.show();
-        tg.onEvent("mainButtonClicked", () => {
-            const data = JSON.stringify({ action: "main_button_click", value: "MainButton data" });
+        tg.MainButton.onClick(() => {
+            const data = JSON.stringify({
+                action: "main_button_click",
+                value: "MainButton data"
+            });
             tg.sendData(data);
             status.textContent = `Данные отправлены через MainButton: ${data}`;
-            console.log("Данные отправлены через MainButton:", data);
         });
-
-        // Предотвращение закрытия WebApp
-        tg.enableClosingConfirmation();
     </script>
 </body>
 </html>
