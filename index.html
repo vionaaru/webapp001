@@ -40,7 +40,7 @@
 
         const status = document.getElementById("status");
 
-        // Отправка данных с предотвращением закрытия
+        // Отправка данных через MainButton и обычную кнопку
         document.getElementById("send-data-btn").addEventListener("click", () => {
             const queryId = tg.initDataUnsafe.query_id || "unknown";
             const data = JSON.stringify({
@@ -50,15 +50,20 @@
             });
 
             tg.sendData(data); // Отправляем данные
-            tg.MainButton.show();
-            tg.MainButton.text = "Данные отправлены";
             status.textContent = `Данные отправлены: ${data}`;
             console.log("Данные отправлены:", data);
         });
 
-        // Убедимся, что WebApp остаётся активным
+        // Обработка MainButton
         tg.onEvent("mainButtonClicked", () => {
-            tg.sendData("Данные от MainButton с preventClose");
+            const data = JSON.stringify({ action: "main_button_click", value: "MainButton data" });
+            tg.sendData(data);
+            console.log("Данные отправлены через MainButton:", data);
+        });
+
+        // Предотвращение закрытия WebApp
+        tg.onEvent("popupClosed", (event) => {
+            console.log("WebApp закрыт:", event);
         });
     </script>
 </body>
