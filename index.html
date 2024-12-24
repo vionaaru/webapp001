@@ -40,31 +40,32 @@
 
         const status = document.getElementById("status");
 
-        // Отправка данных через MainButton и обычную кнопку
+        function sendData(data) {
+            if (tg.initDataUnsafe.start_param) {
+                // Для inline режима
+                tg.sendData(data);
+                status.textContent = `Данные отправлены: ${data}`;
+            } else {
+                // Для обычного режима
+                tg.MainButton.setText("Отправить");
+                tg.MainButton.show();
+                tg.MainButton.onClick(() => {
+                    tg.sendData(data);
+                    status.textContent = `Данные отправлены: ${data}`;
+                });
+            }
+        }
+
         document.getElementById("send-data-btn").addEventListener("click", () => {
-            const queryId = tg.initDataUnsafe.query_id || "unknown";
             const data = JSON.stringify({
-                query_id: queryId,
                 action: "button_click",
                 value: "Test data from WebApp"
             });
-
-            tg.sendData(data); // Отправляем данные
-            status.textContent = `Данные отправлены: ${data}`;
-            console.log("Данные отправлены:", data);
+            sendData(data);
         });
 
-        // Обработка MainButton
-        tg.onEvent("mainButtonClicked", () => {
-            const data = JSON.stringify({ action: "main_button_click", value: "MainButton data" });
-            tg.sendData(data);
-            console.log("Данные отправлены через MainButton:", data);
-        });
-
-        // Предотвращение закрытия WebApp
-        tg.onEvent("popupClosed", (event) => {
-            console.log("WebApp закрыт:", event);
-        });
+        // Предотвращаем закрытие WebApp
+        tg.enableClosingConfirmation();
     </script>
 </body>
 </html>
