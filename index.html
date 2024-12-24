@@ -37,35 +37,27 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.enableClosingConfirmation();
 
         const status = document.getElementById("status");
 
-        function sendData(data) {
-            if (tg.initDataUnsafe.start_param) {
-                // Для inline режима
-                tg.sendData(data);
-                status.textContent = `Данные отправлены: ${data}`;
-            } else {
-                // Для обычного режима
-                tg.MainButton.setText("Отправить");
-                tg.MainButton.show();
-                tg.MainButton.onClick(() => {
-                    tg.sendData(data);
-                    status.textContent = `Данные отправлены: ${data}`;
-                });
-            }
-        }
-
         document.getElementById("send-data-btn").addEventListener("click", () => {
-            const data = JSON.stringify({
+            const data = {
                 action: "button_click",
                 value: "Test data from WebApp"
-            });
-            sendData(data);
+            };
+
+            tg.sendData(JSON.stringify(data));
+            status.textContent = `Данные отправлены: ${JSON.stringify(data)}`;
         });
 
-        // Предотвращаем закрытие WebApp
-        tg.enableClosingConfirmation();
+        tg.onEvent("mainButtonClicked", () => {
+            const data = {
+                action: "main_button_click",
+                value: "MainButton data"
+            };
+            tg.sendData(JSON.stringify(data));
+        });
     </script>
 </body>
 </html>

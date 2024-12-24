@@ -17,11 +17,7 @@ def web_app_keyboard_inline():
     web_app = WebAppInfo(url="https://vionaaru.github.io/webapp001/")
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(
-                text="Запустить WebApp",
-                web_app=web_app,
-                callback_data="webapp_start"
-            )]
+            [InlineKeyboardButton(text="Запустить WebApp", web_app=web_app)]
         ]
     )
     return keyboard
@@ -46,10 +42,6 @@ async def start_fun(message: Message):
         "Либо воспользуйтесь обычной кнопкой:",
         reply_markup=web_app_keyboard()
     )
-
-@dp.callback_query(lambda c: c.data == "webapp_start")
-async def process_webapp_start(callback_query):
-    await bot.answer_callback_query(callback_query.id)
 
 @dp.message(lambda msg: msg.content_type == ContentType.WEB_APP_DATA)
 async def handle_web_app_data(message: Message):
