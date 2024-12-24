@@ -14,7 +14,6 @@
             margin: 0;
             padding: 20px;
         }
-
         button {
             margin-top: 20px;
             padding: 10px 20px;
@@ -25,49 +24,32 @@
             border-radius: 5px;
             cursor: pointer;
         }
-
         button:hover {
             opacity: 0.9;
-        }
-
-        #status {
-            margin-top: 20px;
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <h1>Пример Telegram WebApp</h1>
     <button id="send-data-btn">Отправить данные</button>
-    <button id="close-btn">Закрыть WebApp</button>
     <p id="status"></p>
 
     <script>
         const tg = window.Telegram.WebApp;
-
-        tg.expand(); // Расширяем WebApp
+        tg.expand();
 
         const status = document.getElementById("status");
 
-        // Отправка данных через MainButton
-        tg.MainButton.setText("Отправить данные");
-        tg.MainButton.show();
-        tg.MainButton.enable();
-
-        tg.onEvent('mainButtonClicked', function () {
-            tg.sendData("Данные от MainButton WebApp"); // Отправляем данные
-            status.textContent = "Данные отправлены через MainButton!";
-        });
-
-        // Отправка данных через кнопку
         document.getElementById("send-data-btn").addEventListener("click", () => {
-            tg.sendData("Данные от кнопки"); // Отправляем данные
-            status.textContent = "Данные отправлены через кнопку!";
-        });
-
-        // Закрытие WebApp
-        document.getElementById("close-btn").addEventListener("click", () => {
-            tg.close(); // Закрыть WebApp
+            const queryId = tg.initDataUnsafe.query_id || "unknown";
+            const data = JSON.stringify({
+                query_id: queryId,
+                action: "button_click",
+                value: "Test data from WebApp"
+            });
+            tg.sendData(data); // Отправляем данные
+            status.textContent = `Данные отправлены: ${data}`;
+            console.log("Данные отправлены:", data);
         });
     </script>
 </body>

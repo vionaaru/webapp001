@@ -16,7 +16,7 @@ dp = Dispatcher()
 
 # Функция для создания inline-клавиатуры с WebApp кнопками
 def web_app_keyboard_inline():
-    web_app = WebAppInfo(url="https://vionaaru.github.io/webapp001/")  # URL вашего WebApp
+    web_app = WebAppInfo(url="https://vionaaru.github.io/webapp001/")
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="Запустить WebApp", web_app=web_app)]
@@ -33,20 +33,27 @@ async def start_fun(message: Message):
     )
 
 # Обработчик данных, полученных из WebApp
-@dp.message(lambda msg: msg.content_type == "web_app_data")
+@dp.message(lambda msg: msg.content_type == ContentType.WEB_APP_DATA)
 async def handle_web_app_data(message: Message):
     web_app_data = message.web_app_data.data  # Данные из WebApp
     web_app_query_id = message.web_app_data.query_id  # Уникальный ID запроса
-    print(f"Данные из WebApp: {web_app_data}")
+    print(f"Получены данные из WebApp: {web_app_data}")
     print(f"Query ID: {web_app_query_id}")
 
     # Отправляем ответ через AnswerWebAppQuery
-    result = InlineQueryResultArticle(
-        id="1",
-        title="Ответ от WebApp",
-        input_message_content=InputTextMessageContent(f"Данные: {web_app_data}")
-    )
-    await bot.answer_web_app_query(web_app_query_id, result)
+    if web_app_query_id:
+        await bot.answer_web_app_query(
+            web_app_query_id,
+            InlineQueryResultArticle(
+                id="1",
+                title="Данные получены",
+                input_message_content=InputTextMessageContent(
+                    f"Данные из WebApp: {web_app_data}"
+                )
+            )
+        )
+    else:
+        await message.answer("Не удалось обработать данные WebApp.")
 
 # Основная функция
 async def main():
