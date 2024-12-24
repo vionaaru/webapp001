@@ -13,48 +13,41 @@ API_TOKEN = env.str("TG_TOKEN")
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
-def web_app_keyboard_inline():
+# Клавиатура с inline-кнопкой для WebApp
+def web_app_inline_keyboard():
     web_app = WebAppInfo(url="https://vionaaru.github.io/webapp001/")
-    keyboard = InlineKeyboardMarkup(
+    return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(
-                text="Запустить WebApp",
-                web_app=web_app
-            )]
+            [InlineKeyboardButton(text="Открыть WebApp", web_app=web_app)]
         ]
     )
-    return keyboard
 
-def web_app_keyboard():
+# Клавиатура с обычной кнопкой для WebApp
+def web_app_reply_keyboard():
     web_app = WebAppInfo(url="https://vionaaru.github.io/webapp001/")
-    keyboard = ReplyKeyboardMarkup(
+    return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="Открыть WebApp", web_app=web_app)]
         ],
         resize_keyboard=True
     )
-    return keyboard
 
+# Обработчик команды /start
 @dp.message(Command("start"))
-async def start_fun(message: Message):
-    await message.answer(
-        "Привет! Нажми inline кнопку ниже, чтобы открыть WebApp:",
-        reply_markup=web_app_keyboard_inline()
-    )
-    await message.answer(
-        "Либо воспользуйтесь обычной кнопкой:",
-        reply_markup=web_app_keyboard()
-    )
+async def start_command(message: Message):
+    await message.answer("Нажмите кнопку ниже для открытия WebApp:", reply_markup=web_app_inline_keyboard())
+    await message.answer("Или воспользуйтесь обычной кнопкой:", reply_markup=web_app_reply_keyboard())
 
+# Обработчик данных из WebApp
 @dp.message(lambda msg: msg.content_type == ContentType.WEB_APP_DATA)
 async def handle_web_app_data(message: Message):
     try:
-        web_app_data = message.web_app_data.data
-        await message.answer(f"Получены данные из WebApp: {web_app_data}")
-        print(f"Получены данные из WebApp: {web_app_data}")
+        data = message.web_app_data.data
+        await message.answer(f"Получены данные из WebApp: {data}")
+        print(f"Получены данные из WebApp: {data}")
     except Exception as e:
-        print(f"Ошибка при обработке данных WebApp: {e}")
-        await message.answer("Произошла ошибка при обработке данных")
+        await message.answer("Ошибка при обработке данных WebApp")
+        print(f"Ошибка: {e}")
 
 async def main():
     await dp.start_polling(bot)

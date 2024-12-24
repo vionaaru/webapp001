@@ -3,63 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebApp Test</title>
+    <title>WebApp Example</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            color: var(--tg-theme-text-color);
-            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color, #222);
+            background-color: var(--tg-theme-bg-color, #fff);
             margin: 0;
             padding: 20px;
         }
         button {
-            margin-top: 20px;
             padding: 10px 20px;
+            margin: 10px;
             font-size: 16px;
-            background-color: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
             border: none;
             border-radius: 5px;
+            background-color: var(--tg-theme-button-color, #50a8eb);
+            color: var(--tg-theme-button-text-color, #fff);
             cursor: pointer;
-        }
-        button:hover {
-            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <h1>Пример Telegram WebApp</h1>
-    <button id="send-data-btn">Отправить данные</button>
+    <h1>WebApp Example</h1>
+    <button id="send-data">Отправить данные</button>
+    <button id="close-app">Закрыть WebApp</button>
     <p id="status"></p>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.enableClosingConfirmation();
+        tg.expand(); // Расширяем WebApp
 
-        const status = document.getElementById("status");
-
-        document.getElementById("send-data-btn").addEventListener("click", () => {
+        // Событие для отправки данных
+        document.getElementById("send-data").addEventListener("click", () => {
             const data = JSON.stringify({
                 action: "button_click",
                 value: "Test data from WebApp"
             });
-            tg.sendData(data);
-            status.textContent = `Данные отправлены: ${data}`;
+            tg.sendData(data); // Отправка данных в Telegram
+            document.getElementById("status").textContent = `Данные отправлены: ${data}`;
         });
 
-        tg.MainButton.setText("Отправить MainButton");
-        tg.MainButton.show();
-        tg.MainButton.onClick(() => {
-            const data = JSON.stringify({
-                action: "main_button_click",
-                value: "MainButton data"
-            });
-            tg.sendData(data);
-            status.textContent = `Данные отправлены через MainButton: ${data}`;
+        // Событие для закрытия WebApp
+        document.getElementById("close-app").addEventListener("click", () => {
+            tg.close();
         });
+
+        // Подтверждение для предотвращения случайного закрытия
+        tg.enableClosingConfirmation();
     </script>
 </body>
 </html>
