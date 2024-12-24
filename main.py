@@ -1,7 +1,6 @@
 import asyncio
 from aiogram import Bot, Dispatcher
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, ReplyKeyboardMarkup, \
-    KeyboardButton
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
 from aiogram.types.message import ContentType
 from environs import Env
@@ -43,7 +42,7 @@ def web_app_keyboard():
 @dp.message(Command("start"))
 async def start_fun(message: Message):
     await message.answer(
-        "Привет! Нажми одну из кнопок ниже, чтобы открыть WebApp:",
+        "Привет! Нажми inline кнопку ниже, чтобы открыть WebApp:",
         reply_markup=web_app_keyboard_inline()
     )
     await message.answer(
