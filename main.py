@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import Bot, Dispatcher
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, InlineQueryResultArticle, InputTextMessageContent
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
 from aiogram.types.message import ContentType
 
@@ -24,36 +24,35 @@ def web_app_keyboard_inline():
     )
     return keyboard
 
+# Функция для создания обычной клавиатуры с WebApp кнопкой
+def web_app_keyboard():
+    web_app = WebAppInfo(url="https://vionaaru.github.io/webapp001/")
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Открыть WebApp", web_app=web_app)]
+        ],
+        resize_keyboard=True
+    )
+    return keyboard
+
 # Обработчик команды /start
 @dp.message(Command("start"))
 async def start_fun(message: Message):
     await message.answer(
-        "Привет! Нажми кнопку ниже, чтобы открыть WebApp:",
+        "Привет! Нажми одну из кнопок ниже, чтобы открыть WebApp:",
         reply_markup=web_app_keyboard_inline()
+    )
+    await message.answer(
+        "Либо воспользуйтесь обычной кнопкой:",
+        reply_markup=web_app_keyboard()
     )
 
 # Обработчик данных, полученных из WebApp
 @dp.message(lambda msg: msg.content_type == ContentType.WEB_APP_DATA)
 async def handle_web_app_data(message: Message):
-    web_app_data = message.web_app_data.data  # Данные из WebApp
-    web_app_query_id = message.web_app_data.query_id  # Уникальный ID запроса
-    print(f"Получены данные из WebApp: {web_app_data}")
-    print(f"Query ID: {web_app_query_id}")
-
-    # Отправляем ответ через AnswerWebAppQuery
-    if web_app_query_id:
-        await bot.answer_web_app_query(
-            web_app_query_id,
-            InlineQueryResultArticle(
-                id="1",
-                title="Данные получены",
-                input_message_content=InputTextMessageContent(
-                    f"Данные из WebApp: {web_app_data}"
-                )
-            )
-        )
-    else:
-        await message.answer("Не удалось обработать данные WebApp.")
+    web_app_data = message.web_app_data.data
+    print(f"Получены данные: {web_app_data}")
+    await message.answer(f"Получены данные из WebApp: {web_app_data}")
 
 # Основная функция
 async def main():

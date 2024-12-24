@@ -40,6 +40,7 @@
 
         const status = document.getElementById("status");
 
+        // Отправка данных с предотвращением закрытия
         document.getElementById("send-data-btn").addEventListener("click", () => {
             const queryId = tg.initDataUnsafe.query_id || "unknown";
             const data = JSON.stringify({
@@ -47,9 +48,17 @@
                 action: "button_click",
                 value: "Test data from WebApp"
             });
+
             tg.sendData(data); // Отправляем данные
+            tg.MainButton.show();
+            tg.MainButton.text = "Данные отправлены";
             status.textContent = `Данные отправлены: ${data}`;
             console.log("Данные отправлены:", data);
+        });
+
+        // Убедимся, что WebApp остаётся активным
+        tg.onEvent("mainButtonClicked", () => {
+            tg.sendData("Данные от MainButton с preventClose");
         });
     </script>
 </body>
