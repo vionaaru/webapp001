@@ -13,6 +13,7 @@ API_TOKEN = env.str("TG_TOKEN")
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
+# Inline-клавиатура с WebApp
 def web_app_keyboard_inline():
     web_app = WebAppInfo(url="https://vionaaru.github.io/webapp001/")
     keyboard = InlineKeyboardMarkup(
@@ -22,6 +23,7 @@ def web_app_keyboard_inline():
     )
     return keyboard
 
+# Обычная клавиатура с WebApp
 def web_app_keyboard():
     web_app = WebAppInfo(url="https://vionaaru.github.io/webapp001/")
     keyboard = ReplyKeyboardMarkup(
@@ -32,6 +34,7 @@ def web_app_keyboard():
     )
     return keyboard
 
+# Обработчик команды /start
 @dp.message(Command("start"))
 async def start_fun(message: Message):
     await message.answer(
@@ -43,6 +46,7 @@ async def start_fun(message: Message):
         reply_markup=web_app_keyboard()
     )
 
+# Обработчик данных из WebApp
 @dp.message(lambda msg: msg.content_type == ContentType.WEB_APP_DATA)
 async def handle_web_app_data(message: Message):
     try:
@@ -53,6 +57,7 @@ async def handle_web_app_data(message: Message):
         print(f"Ошибка при обработке данных WebApp: {e}")
         await message.answer("Произошла ошибка при обработке данных")
 
+# Основная функция
 async def main():
     await dp.start_polling(bot)
 
