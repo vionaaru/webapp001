@@ -49,13 +49,23 @@
 
         const status = document.getElementById("status");
 
-        // Отправка данных через кнопку
-        document.getElementById("send-data-btn").addEventListener("click", () => {
-            tg.sendData("Test data without closing WebApp"); // Отправляем данные
-            status.textContent = "Данные отправлены боту!";
+        // Отправка данных через MainButton
+        tg.MainButton.setText("Отправить данные");
+        tg.MainButton.show();
+        tg.MainButton.enable();
+
+        tg.onEvent('mainButtonClicked', function () {
+            tg.sendData("Данные от MainButton WebApp"); // Отправляем данные
+            status.textContent = "Данные отправлены через MainButton!";
         });
 
-        // Закрытие WebApp (по желанию)
+        // Отправка данных через кнопку
+        document.getElementById("send-data-btn").addEventListener("click", () => {
+            tg.sendData("Данные от кнопки"); // Отправляем данные
+            status.textContent = "Данные отправлены через кнопку!";
+        });
+
+        // Закрытие WebApp
         document.getElementById("close-btn").addEventListener("click", () => {
             tg.close(); // Закрыть WebApp
         });
